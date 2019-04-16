@@ -1,13 +1,13 @@
 openapi: 3.0.2
 info:
-  description: OCFL Client API designed for ORA Digital Preservation Layer
+  description: OCFL Client API designed for ORA Digital Preservation Layer, the project is maintained at https://github.com/tomwrobel/ora_ocfl/openapi
   version: "0.1"
   title: ORA OCFL API
   contact:
     email: thomas.wrobel@bodleian.ox.ac.uk
   license:
     name: MIT
-    url: 'http://github.com/tomwrobel/ora_ocfl/LICENSE'
+    url: 'https://github.com/tomwrobel/ora_ocfl/LICENSE'
 tags:
   - name: All versions
     description: Features that are not related to object versions
@@ -21,6 +21,8 @@ tags:
     description: operations that take place on files within an OCFL object
   - name: ORA specific
     description: Features that reflect ORA business requirements
+  - name: Non-specification
+    description: Features that are not described in the OCFL specification
 paths:
   '/objects/{objectId}':
     get:
@@ -202,6 +204,7 @@ paths:
       tags:
         - All versions
         - File operations
+        - Non-specification
       summary: Remove a file completely from an OCFL object
       description: Purge a file from an OCFL object
       operationId: purgeFile
@@ -278,6 +281,7 @@ paths:
       tags:
         - All versions
         - File operations
+        - Non-specification
       summary: >-
         Remove a file completely from an OCFL object
       description: Purge a file from an OCFL object
@@ -1262,6 +1266,7 @@ paths:
     get:
       tags:
         - ORA specific
+        - Non-specification
       summary: Get the fingerprint of the current metadata.xml METS file
       description: The finterprint of the object metadata is a SHA512 hash of a serialisation of the metadata fingerprint
       operationId: getMetadataFingerprint
@@ -1293,6 +1298,7 @@ paths:
     post:
       tags:
         - ORA specific
+        - Non-specification
       summary: Set the metadata fingerprint for the current version of an object
       operationId: setMetadataFingerprint
       parameters:
@@ -1330,6 +1336,7 @@ paths:
     get:
       tags:
         - ORA specific
+        - Non-specification
       summary: Get a list of PREMIS metadata relating to an object
       description: Returns a list of all PREMIS logging information relating to an object
       operationId: getPremisMetadata
@@ -1365,6 +1372,7 @@ paths:
     put:
       tags:
         - ORA specific
+        - Non-specification
       summary: Add new PREMIS metadata to an object
       description: Updates PREMIS information relating to an object with a new item
       operationId: updatePremisMetadata
@@ -1407,6 +1415,7 @@ paths:
     post:
       tags:
         - ORA specific
+        - Non-specification
       summary: Set a list of premis related metadata relating to an object
       description: Set premis information relating to an object containing multiple files
       operationId: setPremisMetadata
@@ -1919,4 +1928,3 @@ components:
       type: apiKey
       in: header
       name: X-API-Microservices-Key
-
