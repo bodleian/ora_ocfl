@@ -267,6 +267,11 @@ paths:
       responses:
         '200':
           description: successful operation
+          headers: 
+            ETag:
+              description: The ETag that represents the current inventory.json hash for the working version of the object. This will be empty if no operations are in progress on the object.
+              schema: 
+                $ref: '#/components/schemas/ETag'
           content:
             application/xml:
               schema:
@@ -301,9 +306,20 @@ paths:
           required: true
           schema:
             type: string
+        - name: ETag
+          in: header
+          description: ETag with the value of the expected inventory.json hash for the working version
+          required: true
+          schema:
+            $ref: '#/components/schemas/ETag'
       responses:
         '200':
           description: successful operation
+          headers:
+            ETag:
+              description: The ETag that represents the current inventory.json hash for the working version of the object. This will be empty if no operations are in progress on the object.
+              schema: 
+                $ref: '#/components/schemas/ETag'
           content:
             application/xml:
               schema:
@@ -315,40 +331,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/OCFLFile'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Object not found
-      security:
-      - AdminApiKeyAuth: []
-      - BasicApiKeyAuth: []
-  '/objects/{objectId}/working/download':
-    get:
-      tags:
-        - Working
-      summary: Download current version of an object by ID
-      description: Returns either a zip file containing a BagIt bag of all of the files in the current version of an OCFL object, or the URL of a location where the BagIt bag will be available (once copied).
-      operationId: downloadObjectHeadById
-      parameters:
-        - name: objectId
-          in: path
-          description: ID of object to return
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/zip:
-              schema:
-                type: string
-                format: binary
-            text/plain:
-              schema:
-                type: string
-                format: url
-                example: "file:///filepath"
         '400':
           description: Invalid ID supplied
         '404':
@@ -373,6 +355,11 @@ paths:
       responses:
         '200':
           description: successful operation
+          headers:
+            ETag:
+              description: The ETag that represents the current inventory.json hash for the working version of the object. This will be empty if no operations are in progress on the object.
+              schema: 
+                $ref: '#/components/schemas/ETag'
           content:
             application/xml:
               schema:
@@ -395,6 +382,7 @@ paths:
     post:
       tags:
         - Working
+        - File operations
       summary: Add a file to the working new version of an OCFL object
       description: Add a file to the working new version of an OCFL object
       operationId: saveFile
@@ -405,6 +393,12 @@ paths:
           required: true
           schema:
             type: string
+        - name: ETag
+          in: header
+          description: ETag with the value of the expected inventory.json hash for the working version
+          required: true
+          schema: 
+            $ref: '#/components/schemas/ETag'
       requestBody:
         description: File to be uploaded
         content: 
@@ -415,6 +409,11 @@ paths:
       responses:
         '200':
           description: successful operation
+          headers:
+            ETag:
+              description: The ETag that represents the current inventory.json hash for the working version of the object. This will be empty if no operations are in progress on the object.
+              schema: 
+                $ref: '#/components/schemas/ETag'
           content:
             application/xml:
               schema:
@@ -437,6 +436,7 @@ paths:
     get:
       tags:
         - Working
+        - File operations
       summary: >-
         Get information regarding an individual file in the working version of
         an OCFL object by its manifest hash
@@ -458,6 +458,11 @@ paths:
       responses:
         '200':
           description: successful operation
+          headers:
+            ETag:
+              description: The ETag that represents the current inventory.json hash for the working version of the object. This will be empty if no operations are in progress on the object.
+              schema: 
+                $ref: '#/components/schemas/ETag'
           content:
             application/xml:
               schema:
@@ -476,6 +481,7 @@ paths:
     delete:
       tags:
         - Working
+        - File operations
       summary: Remove a file from the working new version of an OCFL object, identified by its manfest hash
       description: Remove a file to the working new version of an OCFL object. If the file was added to the working version, but has not yet been committed, remove it from the working version. If the file is in the HEAD of the object, remove it from this version.
       operationId: removeFileFromWorkingByPath
@@ -492,9 +498,20 @@ paths:
           required: true
           schema:
             type: string
+        - name: ETag
+          in: header
+          required: true
+          description: ETag with the expected value of the inventory.json hash for the working version
+          schema:
+            $ref: '#/components/schemas/ETag'
       responses:
         '200':
           description: successful operation
+          headers:
+            ETag:
+              description: The ETag that represents the current inventory.json hash for the working version of the object. This will be empty if no operations are in progress on the object.
+              schema: 
+                $ref: '#/components/schemas/ETag'
           content:
             application/xml:
               schema:
@@ -1122,6 +1139,12 @@ paths:
           required: true
           schema:
             type: string
+        - name: ETag
+          in: header
+          description: ETag with the value of the expected inventory.json hash for the working version
+          required: true
+          schema:
+            $ref: '#/components/schemas/ETag'
       responses:
         '200':
           description: successful operation
@@ -1316,6 +1339,9 @@ servers:
   - url: 'https://virtserver.swaggerhub.com/OCFL_client/ORA_OCFL/3.0.0'
 components:
   schemas:
+    ETag:
+      type: string
+      description: The hash of the inventory.json file for the current working version of an object
     OCFLObject:
       type: object
       required:
@@ -1503,4 +1529,3 @@ components:
       type: apiKey
       in: header
       name: X-API-Microservices-Key
-      
