@@ -1,0 +1,11 @@
+{
+  "purged_file_hash":"955ef7c7acaa150ea728d6075c8581b2cde9e19dff20e429971431899e4162ddda49d4829f2f6a81fac85b0924d4cafc9fb83ea118240e64d8a8f5dd01799785",
+  "purged_file_hash_algorithm": "sha512",
+  "date": "2019-04-17T12:11:00Z",
+  "user": {
+      "name": "Tom Wrobel",
+      "address": "thomas.wrobel@bodleian.ox.ac.uk"
+  },
+  "message": "Purged as a test file purge",
+  "inventory_hash_at_purge": "a86b63147afc6c5284ba1e19f61879f45fbfc4561a222b88a78820a24b9201ac3bee712e5c507b53164d3ede2375768ee97190edf25bd3235864b56d7f9a920e"
+}

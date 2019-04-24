@@ -1,0 +1,24 @@
+{
+  "digestAlgorithm": "sha512",
+  "head": "v1",
+  "id": "abcdef01-abcd-abcd-abcd-abcdef0123456",
+  "manifest": {
+    "11e9c12d6c600d6129fe0a3fb582cdf1c68a7c8b702b1f3433b5bb6967ea637d52ce6fb21e5a26832d07ad6cf6e4885de6d562278b8257809c0a3dbe5c539280": ["v1/content/test-file.txt"],
+    "21125123776402bf096775cb96eb9beee516cb05876947d78f9bd41e454759be5230f08f7e067824c31ed6267d2a6fa604dabe564364b7adaff44cb54fe960a3": ["v1/content/abcdef01-abcd-abcd-abcd-abcdef0123456.ora2.mets.xml"]
+  },
+  "type": "https://ocfl.io/1.0/spec/#inventory",
+  "versions": {
+    "v1": {
+      "created": "2019-03-27T12:47:00Z",
+      "message": "Original version",
+      "state": {
+        "11e9c12d6c600d6129fe0a3fb582cdf1c68a7c8b702b1f3433b5bb6967ea637d52ce6fb21e5a26832d07ad6cf6e4885de6d562278b8257809c0a3dbe5c539280": ["test-file.txt"],
+        "21125123776402bf096775cb96eb9beee516cb05876947d78f9bd41e454759be5230f08f7e067824c31ed6267d2a6fa604dabe564364b7adaff44cb54fe960a3": ["abcdef01-abcd-abcd-abcd-abcdef0123456.ora2.mets.xml"]
+      },
+      "user": {
+        "address": "thomas.wrobel@bodleian.ox.ac.uk",
+        "name": "Tom Wrobel"
+      }    
+    }
+  }
+}

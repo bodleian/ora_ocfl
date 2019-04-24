@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    =========================================
+    =========================================
+    Sample ORA METS object for OCFL encoding
+    =========================================
+    =========================================
+    
+    The record PUBS:97575 as recorded in /elements_xwalks/xwalk-out/input-publication-97575.xml
+    marked up by hand in METS as ORA object ora_12345678-1234-1234-1234-12345678abcd
+-->
+<mets:mets 
+    xmlns:mets="http://www.loc.gov/METS/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd">
+    <mets:metsHdr CREATEDATE="2019-02-18T09:16:00">
+        <mets:agent OTHERTYPE="SOFTWARE" ROLE="CREATOR" TYPE="OTHER">
+            <mets:name>
+                Symplectic Elements
+            </mets:name>
+            <mets:note>
+                Created from Symplectic Elements Publications API
+            </mets:note>
+        </mets:agent>
+    </mets:metsHdr>
+    <mets:dmdSec ID="DMDLOG_0000">
+        <mets:mdWrap MDTYPE="MODS">
+            <mets:xmlData>
+                <mods:mods version="3.8"         
+                        xmlns:mods="http://www.loc.gov/mods/v3"
+                        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://www.loc.gov/mods/v3 https://raw.githubusercontent.com/tomwrobel/ora_data_model/master/ora_mods-3.8.xsd">
+                    <!--
+                        RECORD METADATA
+                        ===============
+                    -->
+                    
+                    <!-- DEFAULT FIELDS -->
+                    <mods:titleInfo>
+                        <mods:title>My test journal article for Hyrax xwalk development</mods:title>
+                    </mods:titleInfo>
+                        
+                    <mods:genre type="type_of_work">Journal article</mods:genre>
+                    <mods:genre type="sub_type_of_work">Article</mods:genre>
+                    
+                    <mods:subject>
+                        <mods:genre>Hyrax</mods:genre>
+                        <mods:genre>Development</mods:genre>
+                        <mods:genre>Xwalks</mods:genre>
+                        <mods:genre>010103 Category Theory, K Theory, Homological Algebra</mods:genre>
+                        <mods:genre>02 Physical Sciences</mods:genre>
+                        <mods:genre>Software Design</mods:genre>
+                        <mods:genre>Software Engineering</mods:genre>
+                        <mods:genre>Metadata</mods:genre>
+                        <mods:genre>History</mods:genre>
+                        <mods:genre>2013 Historical Studies</mods:genre>
+                    </mods:subject>
+                    
+                    <mods:language>   
+                        <mods:languageTerm authority="iso639-2b" type="text">English</mods:languageTerm>
+                    </mods:language>
+                            
+                    <mods:abstract>This is a test journal article with a large amount of manually filled in metadata.</mods:abstract>
+                    <mods:note displayLabel="additional_information">Any notes here.</mods:note>
+                    
+                    <!-- IDENTIFIERS -->
+                    <mods:identifier type="doi">10.1234/56789</mods:identifier>
+                    <mods:identifier type="eissn">1011-1212</mods:identifier>
+                    <mods:identifier type="issn">1045-6007</mods:identifier>
+                    <mods:identifier type="pubs_id">97575</mods:identifier>
+                    <mods:identifier type="tinypid">pubs:97575</mods:identifier>
+                    <mods:identifier type="uuid">uuid:12345678-1234-1234-1234-12345678abcd</mods:identifier>
+                    <mods:identifier type="pid">ora_12345678-1234-1234-1234-12345678abcd</mods:identifier>
+
+                   
+                    <!-- ORIGIN INFO significant dates and place of publication of 'original' published work -->        
+                    <mods:originInfo>
+                        <mods:dateOther type="date_of_acceptance" encoding="iso8601">2019-02-03</mods:dateOther>
+                        <mods:dateIssued encoding="iso8601">2019-02-06</mods:dateIssued>
+                        <mods:copyrightDate encoding="iso8601">2019</mods:copyrightDate>
+                        <mods:place>
+                            <mods:placeTerm type="text">United Kingdom</mods:placeTerm>
+                        </mods:place>
+                        <mods:place>
+                            <mods:placeTerm type="code">http://symplectic.co.uk/publisher</mods:placeTerm>    
+                        </mods:place>
+                    </mods:originInfo>
+                      
+ 
+                    <!-- RIGHTS and LICENCES -->
+                    <mods:accessCondition type="license">CC BY-NC-SA</mods:accessCondition>
+                    <!-- /RECORD METADATA -->
+                
+                    <!-- 
+                        CONTRIBUTIONS AND ROLES
+                        =======================
+                        
+                        commissioning bodies, contributors, copyright_holders, funders, publishers 
+                    -->
+                    <mods:name type="personal">
+                        <mods:displayForm>Jonathan Breeze</mods:displayForm>
+                        
+                        <mods:namePart type="given">Jonathan</mods:namePart>
+                        <mods:namePart type="family">Breeze</mods:namePart>
+                        <mods:alternativeName altType="initials"><mods:namePart>J</mods:namePart></mods:alternativeName>
+                        
+                        <mods:nameIdentifier type="email_address">jonathan@lilliput.edu</mods:nameIdentifier>
+                        <mods:nameIdentifier type="contributor_record_identifier">ora_cri_66666666-6666-6666-6666-666666666666</mods:nameIdentifier>
+                        <mods:nameIdentifier type="orcid_identifier">0000-0002-2173-229X</mods:nameIdentifier>
+                        <mods:nameIdentifier type="sso">JB</mods:nameIdentifier>
+                        <mods:nameIdentifier type="pubs_person_id">29</mods:nameIdentifier>
+                        <mods:nameIdentifier type="figshare-for-institutions-user-account-id">JB</mods:nameIdentifier>
+                        
+                        <mods:affiliation>
+                            <ora:affiliation xmlns:ora="http://ora.ox.ac.uk/terms/">
+                                <ora:affiliationComponent type="institution">Lilliput University</ora:affiliationComponent>
+                                <ora:affiliationComponent type="department">Lilliput Centre for Research Excellence</ora:affiliationComponent>
+                            </ora:affiliation>
+                        </mods:affiliation>    
+                        
+                        <mods:role>
+                            <mods:extension>
+                                <ora:role_order xmlns:ora="http://ora.ox.ac.uk/terms/">1</ora:role_order>
+                            </mods:extension>
+                            <mods:roleTerm type="text">Author</mods:roleTerm>
+                        </mods:role>
+                        <mods:role>
+                            <mods:extension>
+                                <ora:role_order xmlns:ora="http://ora.ox.ac.uk/terms/">1</ora:role_order>
+                            </mods:extension>
+                            <mods:roleTerm type="text">Depositor</mods:roleTerm>
+                        </mods:role>
+                    </mods:name>
+                    
+                    <mods:name type="personal">
+                        <mods:displayForm>Andrew Bennet</mods:displayForm>
+                        
+                        <mods:namePart type="given">Andrew</mods:namePart>
+                        <mods:namePart type="family">Bennet</mods:namePart>
+                        <mods:alternativeName altType="initials"><mods:namePart>A</mods:namePart></mods:alternativeName>
+                        
+                        <mods:nameIdentifier type="contributor_record_identifier">ora_cri_77777777-7777-7777-7777-777777777777</mods:nameIdentifier>
+                        
+                        <mods:role>
+                            <mods:extension>
+                                <ora:role_order xmlns:ora="http://ora.ox.ac.uk/terms/">2</ora:role_order>
+                            </mods:extension>
+                            <mods:roleTerm type="text">Author</mods:roleTerm>
+                        </mods:role>
+                        <mods:role>
+                            <mods:extension>
+                                <ora:role_order xmlns:ora="http://ora.ox.ac.uk/terms/">1</ora:role_order>
+                            </mods:extension>
+                            <mods:roleTerm type="text">Editor</mods:roleTerm>
+                        </mods:role>
+                    </mods:name>
+                    
+                    <!-- FUNDER -->
+                    <mods:name type="corporate">
+                        <mods:displayForm>National Science Digital Library</mods:displayForm>
+                        <mods:role>
+                            <mods:roleTerm type="text">Funder</mods:roleTerm>
+                        </mods:role>
+                        <mods:affiliation> 
+                            <ora_admin:funding xmlns:ora_admin="http://ora.ox.ac.uk/vocabs/admin">
+                                <ora_admin:funder_grant>
+                                    <ora_admin:grant_identifier>DS_1234</ora_admin:grant_identifier>
+                                </ora_admin:funder_grant>                        
+                            </ora_admin:funding>
+                        </mods:affiliation>  
+                    </mods:name>
+                    
+                    <mods:name type="corporate">
+                        <mods:displayForm>Cancer Research Institute</mods:displayForm>
+                        <mods:role>
+                            <mods:roleTerm type="text">Funder</mods:roleTerm>
+                        </mods:role>
+                        <mods:affiliation>  
+                            <ora_admin:funding xmlns:ora_admin="http://ora.ox.ac.uk/vocabs/admin">
+                                <ora_admin:funder_grant>
+                                    <ora_admin:grant_identifier>ABC123</ora_admin:grant_identifier>
+                                </ora_admin:funder_grant>                        
+                            </ora_admin:funding>
+                        </mods:affiliation>  
+                    </mods:name>
+                    
+                    <mods:name type="corporate">
+                        <mods:displayForm>Cancer Research Institute</mods:displayForm>
+                        <mods:role>
+                            <mods:roleTerm type="text">Funder</mods:roleTerm>
+                        </mods:role>
+                        <mods:affiliation>  
+                            <ora_admin:funding xmlns:ora_admin="http://ora.ox.ac.uk/vocabs/admin">
+                                <ora_admin:funder_grant>
+                                    <ora_admin:grant_identifier>ABC123</ora_admin:grant_identifier>
+                                </ora_admin:funder_grant>                        
+                            </ora_admin:funding>
+                        </mods:affiliation>  
+                    </mods:name>
+                    
+                    <mods:name type="corporate">
+                        <mods:displayForm>EPSRC</mods:displayForm>
+                        <mods:role>
+                            <mods:roleTerm type="text">Funder</mods:roleTerm>
+                        </mods:role>
+                        <mods:affiliation>  
+                            <ora_admin:funding xmlns:ora_admin="http://ora.ox.ac.uk/vocabs/admin">
+                                <ora_admin:funder_grant>
+                                    <ora_admin:grant_identifier>EP/H019669/1</ora_admin:grant_identifier>
+                                </ora_admin:funder_grant>                        
+                            </ora_admin:funding>
+                        </mods:affiliation>  
+                    </mods:name>
+                    
+                    <mods:name type="corporate">
+                        <mods:displayForm>EPSRC</mods:displayForm>
+                        <mods:role>
+                            <mods:roleTerm type="text">Funder</mods:roleTerm>
+                        </mods:role>
+                        <mods:affiliation>  
+                            <ora_admin:funding xmlns:ora_admin="http://ora.ox.ac.uk/vocabs/admin">
+                                <ora_admin:funder_grant>
+                                    <ora_admin:grant_identifier>EP/E00573X/2</ora_admin:grant_identifier>
+                                </ora_admin:funder_grant>                        
+                            </ora_admin:funding>
+                        </mods:affiliation>  
+                    </mods:name>
+
+                    
+                    <!-- PUBLISHER -->
+                    <mods:name type="corporate">
+                        <mods:displayForm>University of Hawaii</mods:displayForm>
+                        <mods:role>
+                            <mods:roleTerm type="text">Publisher</mods:roleTerm>
+                        </mods:role>
+                    </mods:name>
+                    <!-- /CONTRIBUTIONS AND ROLES -->
+  
+                    <!-- JOURNAL ARTICLE related markup -->
+                    <mods:relatedItem type="host">
+                        <mods:titleInfo>
+                            <mods:title>Journal of Hyrax</mods:title>
+                        </mods:titleInfo>
+                        <mods:part>
+                            <mods:detail type="article">
+                                <mods:number>XXI</mods:number>
+                            </mods:detail>
+                            <mods:detail type="edition">
+                                <mods:number>1st</mods:number>
+                            </mods:detail>
+                            <mods:detail type="issue">
+                                <mods:number>7</mods:number>
+                            </mods:detail>
+                            <mods:extent unit="pages">
+                                <mods:list>45-48</mods:list>
+                            </mods:extent>
+                            <mods:detail type="volume">
+                                <mods:number>42</mods:number>
+                            </mods:detail>
+                        </mods:part>
+                        <mods:physicalDescription>
+                            <mods:form type="status">Published</mods:form>
+                        </mods:physicalDescription>
+                    </mods:relatedItem>
+                    <!-- /JOURNAL ARTICLE related markup -->
+                    
+                   
+                </mods:mods>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="DMDFILE001">
+        <mets:mdWrap MDTYPE="OTHER">
+            <mets:xmlData>
+                <!-- 
+                    BINARY FILE METADATA
+                    ====================
+                -->
+                <ora:repository_file xmlns:dc="http://purl.org/dc/elements/1.1/"
+                    xmlns:dcterms="http://purl.org/dc/terms/"
+                    xmlns:rioxxterms="http://www.rioxx.net/schema/v2.0/rioxx/"
+                    xmlns:foxml="info:fedora/fedora-system:def/foxml#"
+                    xmlns:oxds="http://vocab.ox.ac.uk/dataset/schema#"
+                    xmlns:ora="http://ora.ox.ac.uk/terms/"
+                    xmlns:symp="http://symplectic/symplectic-elements:def/model#"
+                    xmlns:ali="http://www.niso.org/schemas/ali/1.0/">
+                    <dc:title>test-file.txt</dc:title>
+                    <rioxxterms:version>Accepted Version</rioxxterms:version>
+                </ora:repository_file>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:amdSec ID="AMDLOG_0000">
+        <mets:rightsMD ID="RIGHTSMD_01">
+            <mets:mdWrap MDTYPE="METSRIGHTS">
+                <mets:xmlData>
+                    <metsrights:RightsDeclarationMD RIGHTSCATEGORY="LICENSED" xmlns:metsrights="http://http://cosimo.stanford.edu/sdr/metsrights/">
+                        <metsrights:RightsDeclaration><!-- field:record_ora_deposit_licence --></metsrights:RightsDeclaration>
+                    </metsrights:RightsDeclarationMD>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:rightsMD>
+        <mets:sourceMD ID="SOURCEMD_01">
+            <mets:mdWrap MDTYPE="MODS">
+                <mets:xmlData>
+                    <mods:mods version="3.8" xmlns:mods="http://www.loc.gov/mods/v3">
+                       
+                       <!-- GENERAL ADMIN -->
+                        <mods:recordInfo>
+                            <mods:recordCreationDate>2019-02-06</mods:recordCreationDate>
+                            <mods:recordContentSource>Symplectic Elements</mods:recordContentSource>
+                            <mods:recordInfoNote type="ora_data_model_version">2.0</mods:recordInfoNote>
+                            <mods:recordInfoNote type="requires_review">true</mods:recordInfoNote>
+                        </mods:recordInfo>
+                       
+                       <mods:extension>
+                           <ora_admin:admin 
+                               xmlns:ora_admin="http://ora.ox.ac.uk/vocabs/admin"
+                               xmlns:dc="http://purl.org/dc/elements/1.1/"
+                               xmlns:dcterms="http://purl.org/dc/terms/"
+                               xmlns:mods="http://www.loc.gov/mods/v3">
+                               <ora_admin:record_deposit_date>2019-02-06</ora_admin:record_deposit_date>
+                               <ora_admin:record_publication_date>2019-02-05</ora_admin:record_publication_date>
+                           </ora_admin:admin>
+                       </mods:extension>
+                        
+                        
+                        <!-- EMBARGO information -->
+                        <mods:accessCondition type="record_embargo_end_date">9999-12-31</mods:accessCondition>
+                    </mods:mods>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:sourceMD>
+    </mets:amdSec>
+    <mets:fileSec>
+        <mets:fileGrp>
+            <mets:file ID="FILENAME1" MIMETYPE="mimetype" />
+        </mets:fileGrp>
+    </mets:fileSec>
+    <mets:structMap TYPE="LOGICAL">
+        <mets:div DMDID="DMDLOG_0000" ADMID="AMDLOG_0000" ID="LOG_0000" LABEL="Object ID" TYPE="Repository object">
+            <mets:div DMDID="DMDFILE001" LABEL="test-file.txt" TYPE="Repository file">
+                <mets:fptr FILEID="FILENAME1"/>
+            </mets:div>
+        </mets:div>
+    </mets:structMap>
+</mets:mets>

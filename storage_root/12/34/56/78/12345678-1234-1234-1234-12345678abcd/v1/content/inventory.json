@@ -1,0 +1,24 @@
+{
+  "digestAlgorithm": "sha512",
+  "head": "v1",
+  "id": "12345678_1234-1234-1234-12345678abcd",
+  "manifest": {
+    "11e9c12d6c600d6129fe0a3fb582cdf1c68a7c8b702b1f3433b5bb6967ea637d52ce6fb21e5a26832d07ad6cf6e4885de6d562278b8257809c0a3dbe5c539280": ["v1/test-file.txt"],
+    "62e42efc6851e8cad1cd49e0dfc56e6e622e4616d2c8ee6065641b05a068cedcf72241242705bbd4e9866b4f34d785bfc3d9171c02111e3fa47b759fd1bbb5d4": ["v1/12345678-1234-1234-1234-12345678abcd.ora2.mets.xml"]
+  },
+  "type": "https://ocfl.io/1.0/spec/#inventory",
+  "versions": {
+    "v1": {
+      "created": "2019-03-20T16:12:00+0:00Z",
+      "message": "Original version",
+      "state": {
+        "11e9c12d6c600d6129fe0a3fb582cdf1c68a7c8b702b1f3433b5bb6967ea637d52ce6fb21e5a26832d07ad6cf6e4885de6d562278b8257809c0a3dbe5c539280": ["test-file.txt"],
+        "62e42efc6851e8cad1cd49e0dfc56e6e622e4616d2c8ee6065641b05a068cedcf72241242705bbd4e9866b4f34d785bfc3d9171c02111e3fa47b759fd1bbb5d4": ["12345678-1234-1234-1234-12345678abcd.ora2.mets.xml"]
+      },
+      "user": {
+        "address": "thomas.wrobel@bodleian.ox.ac.uk",
+        "name": "Tom Wrobel"
+      }    
+    }
+  }
+}
