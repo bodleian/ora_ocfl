@@ -1,0 +1,1441 @@
+openapi: 3.0.2
+info:
+  description:
+    API for a REST-based OCFL client daemon. This is intended as a wrapper around a command-line OCFL client, such as https://github.com/birkland/ocfl. The API was designed for ORA4 Digital Preservation Solution. The project is maintained at https://github.com/tomwrobel/ora_ocfl, and the latest version of this file is at https://github.com/tomwrobel/ora_ocfl/openapi/ocfld-openapi.json.
+    
+    
+    Ideas for version 4
+    
+    - avoid the need for separate metadata and /download URLs by either content negotiation (Accept header) or always return metadata in the header, and use HEAD requests for metadata only
+    
+    - alternatively, replace /download for content with /info for metadata requests (more REST-y)
+    
+    - suggestions welcome!
+  version: "0.3.3"
+  title: ocfld - a REST-based OCFL client daemon
+  contact:
+    email: thomas.wrobel@bodleian.ox.ac.uk
+  license:
+    name: MIT
+    url: 'https://github.com/tomwrobel/ora_ocfl/LICENSE'
+tags:
+  - name: Objects
+    description: Operations which act on an entire object
+  - name: Files
+    description: operations that take place on files within an OCFL object
+  - name: Head
+    description: Functionality which acts on last complete version of an object (i.e. head)
+  - name: Logs
+    description: Actions related to log files rather than the main OCFL object
+  - name: Non-specification
+    description: Features that are not described in the OCFL specification
+  - name: Not supported by ocfl client
+    description: Not yet supported by @birkland's ocfl command line client
+  - name: Versions
+    description: Features that require knowledge of an object's version history
+  - name: Working
+    description: Prepare a new version for ingest into OCFL (the client should not create the version until the version is created by POST call to /working)
+paths:
+  '/objects/{objectId}':
+    get:
+      tags:
+        - Objects
+      summary: Find object by ID
+      description: Returns a single object's OCFL metadata. \'ocfl ls {id}\'
+      operationId: getObjectById
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            ETag:
+              description: The ETag that represents the current inventory.json hash for the working version of the object. This will be empty if no operations are in progress on the object.
+              schema: 
+                $ref: '#/components/schemas/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OCFLObject'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security: 
+      - AdminApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+      - BasicApiKeyAuth: []
+    post:
+      tags:
+        - Objects
+      summary: Create a new OCFL object (with files if provided)
+      description: Creates a new OCFL object with the specified ID. \`ocfl cp {content} {id}\`
+      operationId: createObject
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to create
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Zip of files to be uploaded along with the object
+        required: false
+        content: 
+          'application/zip':
+            schema:
+              type: string
+              format: binary
+      responses:
+        '201':
+          description: Object created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OCFLFile'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+        '409':
+          description: 'Conflict: object already exists'
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+    delete:
+      tags:
+        - Objects
+      summary: Purge an OCFL object 
+      description: Removes an OCFL object completely from the storage root \'ocfl rm {id}\'
+      operationId: deleteObject
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to create
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Object deleted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OCFLFile'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+  '/objects/download/{objectId}':
+    get:
+      tags:
+        - Objects
+      summary: Get complete copy of the OCFL object
+      description: Returns a copy of an entire OCFL object has stored on disk. \'ocfl ls {id}\' to get file path and then \'cp -R {filepath}\'
+      operationId: archiveObjectById
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security: 
+      - AdminApiKeyAuth: []
+  '/objects/{objectId}/files/existing_path/{path}':
+    delete:
+      tags:
+        - Objects
+        - Non-specification
+      summary: Remove a file completely from an OCFL object
+      description: Purge a file from an OCFL object
+      operationId: purgeFile
+      parameters:
+        - name: objectId
+          in: path
+          description: Object ID of the OCFL object
+          required: true
+          schema:
+            type: string
+        - name: path
+          in: path
+          description: Existing file path of the file within the ORA object
+          required: true
+          schema:
+            type: string
+        - name: If-Match
+          in: header
+          required: true
+          description: The ETag for the working version of the object
+          schema:
+            $ref: '#/components/schemas/ETag'
+        - name: x-ocfl-version-message
+          in: header
+          description: OCFL version message
+          required: false
+          schema:
+            type: string
+        - name: x-ocfl-version-user-name
+          in: header
+          description: The name of the user responsible for the OCFL version
+          required: false
+          schema:
+            type: string
+        - name: x-ocfl-version-user-address
+          in: header
+          description: The email address of the user responsible for the OCFL version
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File purged
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OCFLObject'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+        '412':
+          description: ETag invalid or not supplied
+      security:
+      - AdminApiKeyAuth: []
+  '/objects/{objectId}/files/fixity/existing_path/{path}':
+    get:
+      tags:
+        - Files
+        - Not supported by ocfl library
+      summary: >-
+        Get file fixity information for a given file
+      description: Returns the file fixity information in the inventory.json manifest
+      operationId: getFileFixityByExistingPath
+      parameters:
+        - name: objectId
+          in: path
+          description: Object ID of the OCFL object
+          required: true
+          schema:
+            type: string
+        - name: path
+          in: path
+          description: Existing file path of the file within the ORA object
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                format: checksum
+                example: '66709b068a2faead97113559db78ccd44712cbf2'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+  '/objects/{objectId}/head':
+    get:
+      tags:
+        - Head
+        - Not supported by ocfl library
+      summary: Get OCFL metadata for the last completed version of an object
+      description: Returns OCFL metadata for the last version of an object, including a list of that version's files
+      operationId: getObjectLast
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return
+          required: true
+          schema:
+            type: string
+        - name: versionId
+          in: path
+          description: ID of the specific version to return file information for
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OCFLObjectVersion'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+  '/objects/{objectId}/head/download':
+    get:
+      tags:
+        - Head
+      summary: Download last completed version of an object by ID
+      description: Returns either a zip file containing a BagIt bag of all of the files in the last version of an OCFL object, or the URL of a location where the BagIt bag will be available (once copied). \'ocfl ls {id} --head -p\' and \'cp\'
+      operationId: downloadObjectLastById
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+            text/plain:
+              schema:
+                type: string
+                format: url
+                example: "file:///filepath"
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object or file not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+  '/objects/{objectId}/head/files':
+    get:
+      tags:
+        - Head
+        - Files
+      summary: Get a list of files within the current version of an object
+      description: Returns a list of all files relating to the current version of an object. \'ocfl ls {id} -t {version}\'
+      operationId: getFilesLastByObjectId
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return list of files for that object
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OCFLFile'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+  '/objects/{objectId}/head/files/{path}':
+    get:
+      tags:
+        - Head
+        - Files
+        - Not supported by ocfl library
+      summary: >-
+        Get information regarding an individual file in the last version of
+        an OCFL object
+      description: Returns a list of all manifest information relating to that file
+      operationId: getFileByPathforHead
+      parameters:
+        - name: objectId
+          in: path
+          description: Object ID of the OCFL object
+          required: true
+          schema:
+            type: string
+        - name: path
+          in: path
+          description: Logical path of the file in the OCFL object
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OCFLFileVersionless'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+  '/objects/{objectId}/head/files/download/{path}':
+    get:
+      tags:
+        - Head
+        - Files
+      summary: >-
+        Download an individual file from the last version of an OCFL object
+      description: Returns a binary file from an OCFL object. `ocfl ls {id} {filepath}` then `cp`
+      operationId: downloadFileByPathFromHead
+      parameters:
+        - name: objectId
+          in: path
+          description: Object ID of the OCFL object
+          required: true
+          schema:
+            type: string
+        - name: path
+          in: path
+          description: Logical path of the file in the OCFL object
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+  '/objects/{objectId}/logs':
+    get:
+      tags:
+        - Logs
+        - Not supported by ocfl library
+      summary: Get a list of log files associated with the object
+      description: Returns a list of Objects of a single object
+      operationId: getLogFilesByObject
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OCFLLogFilePath'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+  '/objects/{objectId}/logs/{logFilePath}':
+    get:
+      tags:
+        - Logs
+        - Not supported by ocfl library
+      summary: Get information on a given log file
+      description: Returns details of a log file
+      operationId: getLogFile
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return
+          required: true
+          schema:
+            type: string
+        - name: logFilePath
+          in: path
+          description: Path of the log file within the logs directory
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OCFLLogFile'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object or file not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+    post:
+      tags:
+        - Logs
+        - Not supported by ocfl library
+      summary: Upload a new log file
+      description: Add a new log file to the log files directory
+      operationId: saveLogFile
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to add file to
+          required: true
+          schema:
+            type: string
+        - name: logFilePath
+          in: path
+          description: Path of the intended log file within the logs directory
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: File to be uploaded
+        content: 
+          '*/*':
+            schema:
+              type: string
+              format: binary
+      responses:
+        '201':
+          description: Log file created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OCFLLogFile'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+        '409':
+          description: Log file already exists at path
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+    put:
+      tags:
+        - Logs
+        - Not supported by ocfl library
+      summary: Append to a log file
+      description: Append content to a log file
+      operationId: updateLogFile
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to add file to
+          required: true
+          schema:
+            type: string
+        - name: logFilePath
+          in: path
+          description: Path of the intended log file within the logs directory
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Content to be appended
+        content: 
+          '*/*':
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Content appended to log file
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OCFLLogFile'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+    delete:
+      tags:
+        - Logs
+        - Not supported by ocfl library
+      summary: Delete a given log file
+      description: Purges a log file from the logs directory
+      operationId: purgeLogFile
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return
+          required: true
+          schema:
+            type: string
+        - name: logFilePath
+          in: path
+          description: Path of the log file within the logs directory
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object or file not found
+      security:
+      - AdminApiKeyAuth: []
+  '/objects/{objectId}/logs/download/{logFilePath}':
+    get:
+      tags:
+        - Logs
+        - Not supported by ocfl library
+      summary: Load a log file
+      description: Returns a log file
+      operationId: downloadLogFile
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return
+          required: true
+          schema:
+            type: string
+        - name: logFilePath
+          in: path
+          description: Path of the log file within the logs directory
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object or file not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+  '/objects/{objectId}/versions':
+    get:
+      tags:
+        - Objects
+      summary: Get a list of object versions by object ID
+      description: Returns a list of Objects of a single object and their contents \'ocfl ls {id} -t version\'
+      operationId: getObjectVersionsById
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OCFLObjectVersion'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+  '/objects/{objectId}/versions/{versionId}':
+    get:
+      tags:
+        - Versions
+        - Not supported by ocfl library
+      summary: Get OCFL metadata for a specific version of an object
+      description: Returns OCFL metadata for a given version of an object, including a list of that version's files
+      operationId: getObjectVersionByVersionId
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return
+          required: true
+          schema:
+            type: string
+        - name: versionId
+          in: path
+          description: ID of the specific version to return file information for
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OCFLObjectVersion'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+  '/objects/{objectId}/versions/download/{versionId}':
+    get:
+      tags:
+        - Versions
+      summary: Download specific version of an object by ID
+      description: Returns either a zip file containing a BagIt bag of all of the files in the current version of an OCFL object, or the URL of a location where the BagIt bag will be available (once copied). \'ocfl ls -p -t version {id} {versionId} \' and then \'cp\'
+      operationId: downloadObjectVersionById
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return
+          required: true
+          schema:
+            type: string
+        - name: versionId
+          in: path
+          description: Version of object to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+            text/plain:
+              schema:
+                type: string
+                format: url
+                example: "file:///filepath"
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+  '/objects/{objectId}/versions/{versionId}/files':
+    get:
+      tags:
+        - Versions
+        - Files
+      summary: Get a list of files within the a specified version of an object
+      description: Returns a list of all files relating to a specific version of an object. \'ocfl ls -p -t version {id} {versionId} \'
+      operationId: getFilesByObjectByVersion
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return list of files for that object
+          required: true
+          schema:
+            type: string
+        - name: versionId
+          in: path
+          description: ID of the specific version to return file information for
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OCFLFileVersionless'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+  '/objects/{objectId}/versions/{versionId}/files/{path}':
+    get:
+      tags:
+        - Versions
+        - Files
+        - Not supported by ocfl library
+      summary: >-
+        Get information regarding an individual file in a specific version of
+        an OCFL object
+      description: Returns a list of all manifest information relating to that file
+      operationId: getFileByPathforVersion
+      parameters:
+        - name: objectId
+          in: path
+          description: Object ID of the OCFL object
+          required: true
+          schema:
+            type: string
+        - name: path
+          in: path
+          description: Logical file path of the object within the OCFL object
+          required: true
+          schema:
+            type: string
+        - name: versionId
+          in: path
+          description: Version ID of the OCFL object version
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OCFLFileVersionless'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object or file not found
+      security:
+      - AdminApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+  '/objects/{objectId}/working':
+    get:
+      tags:
+        - Working
+      summary: Get OCFL metadata for the current (working) completed version of an object
+      description: Returns OCFL metadata for the head of an object, including a list of files
+      operationId: getObjectHead
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers: 
+            ETag:
+              description: An ETag for the current working state of the object
+              schema: 
+                $ref: '#/components/schemas/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OCFLObjectVersion'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+    post:
+      tags:
+        - Working
+      summary: Create a new version of an object from the working version
+      description: Returns the new object version
+      operationId: createNewObjectVersion
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to create the version in
+          required: true
+          schema:
+            type: string
+        - name: If-Match
+          in: header
+          description: ETag for the working version of the object
+          required: true
+          schema:
+            $ref: '#/components/schemas/ETag'
+        - name: x-ocfl-version-message
+          in: header
+          description: OCFL version message
+          required: false
+          schema:
+            type: string
+        - name: x-ocfl-version-user-name
+          in: header
+          description: The name of the user responsible for the OCFL version
+          required: false
+          schema:
+            type: string
+        - name: x-ocfl-version-user-address
+          in: header
+          description: The email address of the user responsible for the OCFL version
+          required: false
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Version created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OCFLObjectVersion'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object not found          
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+    delete:
+      tags:
+        - Working
+      summary: Wipe clean the current working version for this object
+      description: Resets the working directory for a given object and removes any files which have been added; also removes any instructions to remove files from HEAD version.
+      operationId: resetWorking
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return list of files for that object
+          required: true
+          schema:
+            type: string
+        - name: If-Match
+          in: header
+          description: ETag that represents the expected working version of the object. This is required unless the working directory does not have an ETag,or the AdminApiKey is used.
+          required: false
+          schema:
+            $ref: '#/components/schemas/ETag'
+      responses:
+        '200':
+          description: Working version clean
+          headers: 
+            ETag:
+              description: An ETag for the current working state of the object
+              schema: 
+                $ref: '#/components/schemas/ETag'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Authorisation required
+        '403':
+          description: 'Not authorised: an AdminApiKey is required if an If-Match header is not supplied'
+        '404':
+          description: Object not found
+        '412':
+          description: Precondition failed - ETag provided was incorrect
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+  '/objects/{objectId}/working/files':
+    get:
+      tags:
+        - Working
+      summary: Get a list of files within the current version of an object
+      description: Returns a list of all files relating to the current version of an object
+      operationId: getFilesByObjectId
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return list of files for that object
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            ETag:
+              description: The ETag that represents the current working version of the object
+              schema: 
+                $ref: '#/components/schemas/ETag'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OCFLFile'
+        '400':
+          description: Invalid ID supplied
+        '401':
+          description: Authorisation required
+        '403':
+          description: 'Not authorised: an AdminApiKey is required if an If-Match header is not supplied'
+        '404':
+          description: Object not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+    post:
+      tags:
+        - Working
+        - Files
+      summary: Add a file to the working new version of an OCFL object
+      description: Add a file to the working new version of an OCFL object
+      operationId: saveFile
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return list of files for that object
+          required: true
+          schema:
+            type: string
+        - name: If-Match
+          in: header
+          description: ETag for the expected working version of the object
+          required: true
+          schema: 
+            $ref: '#/components/schemas/ETag'
+      requestBody:
+        description: File to be uploaded
+        content: 
+          '*/*':
+            schema:
+              type: string
+              format: binary
+      responses:
+        '201':
+          description: File added to the working version
+          headers:
+            ETag:
+              description: ETag for the working version of the object
+              schema: 
+                $ref: '#/components/schemas/ETag'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OCFLFile'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: 'Not authorised: an AdminApiKey is required if an If-Match header is not supplied'
+        '404':
+          description: Object not found
+        '409':
+          description: 'Conflict: File already added at path'
+        '412':
+          description: ETag invalid or not supplied
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+  '/objects/{objectId}/working/files/{path}':
+    get:
+      tags:
+        - Working
+        - Files
+      summary: >-
+        Get information regarding an individual file in the working version of
+        an OCFL object by its manifest hash
+      description: Returns a list of all manifest information relating to that file
+      operationId: getFileByPathforCurrentVersion
+      parameters:
+        - name: objectId
+          in: path
+          description: Object ID of the OCFL object
+          required: true
+          schema:
+            type: string
+        - name: path
+          in: path
+          description: Logical file path for the file
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            ETag:
+              description: The ETag that represents the current working version of the object
+              schema: 
+                $ref: '#/components/schemas/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OCFLFileVersionless'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object or file not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+      - MicroservicesApiKeyAuth: []
+    delete:
+      tags:
+        - Working
+        - Files
+      summary: Remove a file from the working new version of an OCFL object, identified by its manfest hash
+      description: Remove a file to the working new version of an OCFL object. If the file was added to the working version, but has not yet been committed, remove it from the working version. If the file is in the HEAD of the object, remove it from this version.
+      operationId: removeFileFromWorkingByPath
+      parameters:
+        - name: objectId
+          in: path
+          description: ID of object to return list of files for that object
+          required: true
+          schema:
+            type: string
+        - name: path
+          in: path
+          description: Logical file path of the file in the OCFL object
+          required: true
+          schema:
+            type: string
+        - name: If-Match
+          in: header
+          required: true
+          description: ETag with the expected value of the working version of the object
+          schema:
+            $ref: '#/components/schemas/ETag'
+      responses:
+        '200':
+          description: File deleted
+          headers:
+            ETag:
+              description: The ETag that represents the current working version of the object
+              schema: 
+                $ref: '#/components/schemas/ETag'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OCFLFile'
+        '400':
+          description: Unspecified error
+        '401':
+          description: Authorisation required
+        '403':
+          description: Not authorised
+        '404':
+          description: Object or file not found
+      security:
+      - AdminApiKeyAuth: []
+      - BasicApiKeyAuth: []
+
+servers:
+  - url: 'https://virtserver.swaggerhub.com/OCFL_client/ORA_OCFL/3.0.0'
+components:
+  schemas:
+    ETag:
+      type: string
+      description: The ETag for the current working version of an object. The ETag should be the inventory.json sha512 hash of the OCFL head if no updates have been performed, but should updated with the creation of a working version (via a POST to working, a POST to working/files or a DELETE to working/files/{path}). This ETag will be deleted once the working version is deleted, or the working version is written to the OCFL store. The ETag should be updated with every successful change to the working directory.
+    OCFLObject:
+      type: object
+      required:
+        - objectId
+      properties:
+        digestAlgorithm:
+          type: string
+          example: "sha512"
+        head:
+          type: string
+          example: "v2"
+        manifest:
+          type: array
+          items:
+            $ref: '#/components/schemas/OCFLManifestEntry'
+        objectId:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        OCFLStandard:
+          type: string
+          example: "ocfl_object_1.0"
+        type:
+          type: string
+          format: url
+          example: "https://ocfl.io/1.0/spec/#inventory"
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/OCFLObjectVersion'
+    OCFLFile:
+      type: object
+      description: A particular file within an OCFL object
+      required:
+        - sha512
+      properties:
+        sha512:
+          type: string
+          description: SHA 512 hash of the file
+          format: string
+          example: 66709b068a2faead97113559db78ccd44712cbf2
+        filepath:
+          description: Logical file path for the file in the OCFL object
+          type: string
+          example: binary_file_1.txt
+        inVersions:
+          description: Versions which contain this file
+          type: array
+          items:
+            $ref: '#/components/schemas/OCFLObjectVersion'
+    OCFLFilePath:
+      type: object
+      description: The existing path to an OCFL file
+      required:
+      - filepath
+      properties:
+        filepath:
+          type: string
+          example: "v2/content/filename.txt"
+    OCFLFileVersionless:
+      type: object
+      description: A particular file within an OCFL object
+      required:
+        - sha512
+      properties:
+        sha512:
+          type: string
+          description: SHA 512 hash of the file
+          format: string
+          example: 66709b068a2faead97113559db78ccd44712cbf2
+        filepath:
+          description: Logical file path for the file in the OCFL object
+          type: string
+          example: binary_file_1.txt
+    OCFLManifestEntry:
+      type: object
+      description: An entry within an OCFL object manifest
+      required:
+        - sha512
+        - filepath
+      properties:
+        sha512:
+          description: Path to the file from the log directory root
+          type: string
+          example: logfile1.premis
+        filepath:
+          description: Paths to files matching the sha512
+          type: array
+          items:
+            $ref: "#/components/schemas/OCFLFilePath"
+    OCFLLogFile:
+      type: object
+      description: A file within the logs directory
+      required:
+        - filepath
+      properties:
+        filepath:
+          description: Path to the file from the log directory root
+          type: string
+          example: logfile1.premis
+        modified:
+          description: Date of last file modification
+          type: string
+          format: date
+          example: '2019-01-01'
+        size:
+          description: Size in bytes of log file
+          type: integer
+          example: 123012
+    OCFLLogFilePath:
+      type: object
+      description: A files within the logs directory
+      required:
+        - filepath
+      properties:
+        filepath:
+          description: Path to the file from the log directory root
+          type: string
+          example: logfile1.premis
+    OCFLObjectVersion:
+      type: object
+      description: A given version of an OCFL object
+      required:
+        - versionId
+      properties:
+        versionId:
+          type: string
+          format: string
+          example: v1
+        created:
+          type: string
+          format: date
+          example: '2018-02-02T02:02:02Z'
+        message:
+          type: string
+          format: string
+          example: 'Reinstate image.tiff, delete empty.txt'
+        state:
+          type: array
+          items:
+            $ref: '#/components/schemas/OCFLFile'
+        user:
+          $ref: '#/components/schemas/OCFLUser'
+    OCFLUser:
+      type: object
+      description: A User in an OCFL manifest
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          format: string
+          example: Thomas Wrobel
+        address:
+          type: string
+          format: email
+          example: thomas.wrobel@bodleian.ox.ac.uk
+  securitySchemes:
+    AdminApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Admin-Key
+    BasicApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    MicroservicesApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Microservices-Key
