@@ -1,0 +1,50 @@
+{
+  "digestAlgorithm": "sha512",
+  "head": "v3",
+  "id": "ora.ox.ac.uk:uuid:34567890-3456-3456-3456-34567890abcd",
+  "manifest": {
+    "11e9c12d6c600d6129fe0a3fb582cdf1c68a7c8b702b1f3433b5bb6967ea637d52ce6fb21e5a26832d07ad6cf6e4885de6d562278b8257809c0a3dbe5c539280": ["v1/content/test-file.txt"],
+    "bd3f9951fc7944ef6a29a787a7053fca452b3b5a29928da197e3f719f0fe1b36e6d0b5037a6769dc69f6ec7831ccd84c23946784d8a308ab25459fcb362b7896": ["v2/ora.ox.ac.uk:uuid:34567890-3456-3456-3456-34567890abcd.ora2.json"],
+    "29f87ce06b26b13fd9d23780a9f51db2af089c108c27c3380251cf360eb810c1f197e3089bdfda4ff56b0ee1fffa712f374235cc5d03b64b34e34e7db3ce2420": ["v3/content/test-file-2.txt"]
+  },
+  "type": "https://ocfl.io/1.0/spec/#inventory",
+  "versions": {
+    "v1": {
+      "created": "2019-04-09T12:10:00Z",
+      "message": "Binary file deposited without metadata",
+      "state": {
+        "11e9c12d6c600d6129fe0a3fb582cdf1c68a7c8b702b1f3433b5bb6967ea637d52ce6fb21e5a26832d07ad6cf6e4885de6d562278b8257809c0a3dbe5c539280": ["test-file.txt"]
+      },
+      "user": {
+        "address": "oraadmin@bodleian.ox.ac.uk",
+        "name": "Valkyrie deposit process"
+      }    
+    },
+    "v2": {
+      "created": "2019-04-09T12:11:00Z",
+      "message": "Metadata saved in Hyrax",
+      "state": {
+        "11e9c12d6c600d6129fe0a3fb582cdf1c68a7c8b702b1f3433b5bb6967ea637d52ce6fb21e5a26832d07ad6cf6e4885de6d562278b8257809c0a3dbe5c539280": ["test-file.txt"],
+        "bd3f9951fc7944ef6a29a787a7053fca452b3b5a29928da197e3f719f0fe1b36e6d0b5037a6769dc69f6ec7831ccd84c23946784d8a308ab25459fcb362b7896": ["ora.ox.ac.uk:uuid:34567890-3456-3456-3456-34567890abcd.ora2.json"]
+      },
+      "user": {
+        "address": "oraadmin@bodleian.ox.ac.uk",
+        "name": "Sword2 export process"
+      }
+    },
+    "v3": {
+      "created": "2019-04-09T12:14:00Z",
+      "message": "Additional binary file deposited but Hyrax version not yet saved",
+      "state": {
+        "11e9c12d6c600d6129fe0a3fb582cdf1c68a7c8b702b1f3433b5bb6967ea637d52ce6fb21e5a26832d07ad6cf6e4885de6d562278b8257809c0a3dbe5c539280": ["test-file.txt"],
+        "bd3f9951fc7944ef6a29a787a7053fca452b3b5a29928da197e3f719f0fe1b36e6d0b5037a6769dc69f6ec7831ccd84c23946784d8a308ab25459fcb362b7896": ["ora.ox.ac.uk:uuid:34567890-3456-3456-3456-34567890abcd.ora2.json"],
+        "29f87ce06b26b13fd9d23780a9f51db2af089c108c27c3380251cf360eb810c1f197e3089bdfda4ff56b0ee1fffa712f374235cc5d03b64b34e34e7db3ce2420": ["test-file-2.txt"]
+      },
+      "user": {
+        "address": "oraadmin@bodleian.ox.ac.uk",
+        "name": "Valkyrie deposit process"
+      }
+    }
+
+  }
+}

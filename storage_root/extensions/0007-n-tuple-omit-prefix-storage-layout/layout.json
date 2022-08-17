@@ -1,0 +1,7 @@
+{ 
+    "extensionName": "0007-n-tuple-omit-prefix-storage-layout", 
+    "delimiter": ":", 
+    "tupleSize": 2, 
+    "numberOfTuples": 4, 
+    "reverseObjectRoot": false 
+} 
