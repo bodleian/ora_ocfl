@@ -1,5 +1,5 @@
 # ora_ocfl
-The ORA OCFL project home, for the interactions between Hyrax/Sword2 and OCFL.
+The ORA OCFL project home, for the interactions between Hyrax and OCFL.
 
 The ORA4 Digital Preservation Solution (ORA4 DPS) project aims to store copies of all significant versions of ORA objects in an OCFL storage root.
 
